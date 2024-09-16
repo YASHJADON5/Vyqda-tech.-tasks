@@ -1,11 +1,11 @@
 import React, { useState,useRef, useEffect } from 'react'
-
+import spinner from '../assets/spinner.svg'
 import axios from 'axios'
 import InputBox from './InputBox';
 const Base_Url = import.meta.env.VITE_BASE_URL;
 
 function Body() {
-  
+  const [loading,setLoading] = useState(false);
   const contentRef=useRef(null)
   const [title,setTitle]= useState("");
   const [content,setContent]= useState("");
@@ -66,11 +66,13 @@ function Body() {
   const handleContentButtonClick=async()=>{
 
     if(content!=""){
+      setLoading(true);
        
       const response= await axios.post(`${Base_Url}/api/v1/notes`,{
          title,
          content
       })
+      setLoading(false);
       console.log(response.data)
       const newNote = response.data;
       // console.log(newNote,2);
@@ -89,6 +91,10 @@ function Body() {
 const handleDelete = (id) => {
   setFetchedData(fetchedData.filter(note => note.id !== id));
 };
+
+if(loading){
+  return <div className='absolute inset-0 bg-white flex justify-center items-center '><img src={spinner} alt="" /></div>
+}
 
 
   return (

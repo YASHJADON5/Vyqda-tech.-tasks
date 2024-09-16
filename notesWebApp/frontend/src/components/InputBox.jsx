@@ -1,11 +1,13 @@
 import React,{useEffect,useRef,useState} from 'react'
 import DeleteIcon from '../assets/DeleteIcon.svg'
 import axios from 'axios'
+import spinner from '../assets/spinner.svg'
 
 const Base_Url = import.meta.env.VITE_BASE_URL;
 
 function InputBox({title,content,date,id,onDelete}) {
-
+    
+    const [loading,setLoading] = useState(false);
     const [textArea1Value, setTextArea1Value] = useState(title);
     const [textArea2Value, setTextArea2Value] = useState(content);
     
@@ -25,24 +27,29 @@ function InputBox({title,content,date,id,onDelete}) {
     }, [textArea1Value, textArea2Value]); 
 
     const handleDelete=async()=>{
-
+        setLoading(true);
         await axios.delete(`${Base_Url}/api/v1/delete`,{
             data: { id }
         })
         onDelete(id);
+        setLoading(false);
         console.log("successfull");
 
     }
 
     const handleUpdate=async()=>{
+        setLoading(true);
         await axios.put(`${Base_Url}/api/v1/update`,{
             id,
             content:textArea2Value,
             title:textArea1Value
         })
+        setLoading(false);
         console.log("successfully updated")
     }
-
+    if(loading){
+        return <div className='absolute inset-0 bg-white flex justify-center items-center '><img src={spinner} alt="" /></div>
+    }
 
   
   return (
