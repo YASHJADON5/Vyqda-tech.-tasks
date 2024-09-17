@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+const authMiddleware= require('../middleware/authMiddleware')
 const { PrismaClient } = require('@prisma/client');
 const {z}=require('zod');
 const prisma= new PrismaClient();
@@ -15,13 +16,14 @@ const updateNoteSchema= z.object({
 })
 
 
-router.post('/notes',async(req,res)=>{
+router.post('/notes',authMiddleware,async(req,res)=>{
     
-
+    const userid= req.userid;
+    console.log()
     const {content,title}= req.body;
-    if(!content){
+    if (!content || !userid) { 
         return res.status(400).json({ msg: "Missing required fields" });
-    }
+      }
 
     const {success} = createNoteSchema.safeParse(req.body);
     // console.log(success)
@@ -41,6 +43,7 @@ router.post('/notes',async(req,res)=>{
         data:{
             title:req.body.title,
             content:req.body.content,
+            user: { connect: { id: userid } },
             date: `${currentDate}`,
         }
 })
@@ -83,7 +86,7 @@ router.put('/update',async(req,res)=>{
             content:req.body.content
          }
     })
-    console.log(response);
+    // console.log(response);
     res.json({
         msg:"data updated successfully"
     })
@@ -103,7 +106,7 @@ router.delete('/delete',async(req,res)=>{
         }
     })
 
-    console.log(response)
+    // console.log(response)
 
 
     res.json({
@@ -113,8 +116,13 @@ router.delete('/delete',async(req,res)=>{
 
 
 
-router.get('/getall',async(req,res)=>{
-    const response= await prisma.note.findMany()
+router.get('/getall',authMiddleware,async(req,res)=>{
+   
+    const response= await prisma.note.findMany({
+        where:{
+            userid:req.userid
+        }
+    })
     console.log(response)
     res.json({
        data:response,
