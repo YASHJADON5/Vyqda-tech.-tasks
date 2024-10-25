@@ -19,7 +19,7 @@ const Basic = () => {
 
   return (
     <div className='h-screen w-screen bg-[#6A8785] flex justify-center '>
-      <div className='bg-white p-8  shadow-lg w-9/10 md:w-1/3 h-3/5 md:h-3/4 mt-4 rounded-md'>
+      <div className='bg-white p-8  shadow-lg w-9/10 md:w-1/3 h-3/5 md:h-3/4 rounded-md'>
         <h1 className=' mb-4 text-center text-3xl'>Sign in</h1>
         <Formik
           initialValues={{ email: '', password: '' }}

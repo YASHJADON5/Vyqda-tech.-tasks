@@ -118,7 +118,7 @@ user.post('/signin', async(req,res)=>{
     }
 
     catch(err){
-        
+          console.log(err);
           res.status(403).json({
             msg:"somthing breaks"
           })
